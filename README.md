@@ -35,7 +35,7 @@ all testing/development has been done with 17.
 
 * Place the jar with dependencies and your edited application.properties-file in the same directory
 * Open a bash or CMD in the same directory as the .jar
-* Run: `java -jar simple_kafka_mqtt_connector-0.1.0-SNAPSHOT-jar-with-dependencies.jar`
+* Run: `java -jar kafka-mqtt-connector-0.1.0-SNAPSHOT-jar-with-dependencies.jar`
 
 
 ## Usage with Docker
@@ -43,11 +43,24 @@ all testing/development has been done with 17.
 * Docker Hub [original](https://hub.docker.com/r/arthurgrigo/simple-kafka-mqtt-connector) and [this ARM64 edition](https://hub.docker.com/r/mikeoertli/kafka-mqtt-connector) (WORK IN PROGRESS)
 * Run (edit environment variables to your needs!): 
 
+Most basic Docker build command:
+
 ```shell
-docker run -d -t -i -e KAFKA_HOST='localhost' -e KAFKA_PORT=9092 -e KAFKA_CLIENT_ID='testing-kafka-producer-1' \
--e MQTT_HOST='localhost' -e MQTT_PORT=1883 -e MQTT_CLIENT_ID='mqtt-client-1' -e MQTT_QOS=2 \
--e TOPIC_MAPPING='robotgroup001/robot001>>>test;robotgroup001/robot002>>>test02;robotgroup001/robot003>>>test03'  \
---name kafka-mqtt-connector mikeoertli/kafka-mqtt-connector:latest
+docker build -t mikeoertli/kafka-mqtt-connector:0.1.0 -t mikeoertli/kafka-mqtt-connector:latest .
+```
+
+```shell
+docker run -d -t -i \
+  -e KAFKA_HOST='localhost' \
+  -e KAFKA_PORT=9092 \
+  -e KAFKA_CLIENT_ID='testing-kafka-producer-1' \
+  -e MQTT_HOST='localhost' \
+  -e MQTT_PORT=1883 \
+  -e MQTT_CLIENT_ID='mqtt-client-1' \
+  -e MQTT_QOS=2 \
+  -e TOPIC_MAPPING='iot/event/.*>>>iot_event;iot/device/.*>>>iot_device'  \
+  --name kafka-mqtt-connector \
+  mikeoertli/kafka-mqtt-connector:latest
 ```
 
 
