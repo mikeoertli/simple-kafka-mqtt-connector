@@ -5,14 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.fhg.ipa.null70</groupId>
-    <artifactId>simple_kafka_mqtt_connector</artifactId>
+    <artifactId>kafka-mqtt-connector</artifactId>
     <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <description>
-        This application receives messages from a mqtt broker and sends the messages to a kafka cluster.
+        This application receives messages from an MQTT broker and sends the messages to a Kafka cluster.
         Topic mapping is configurable.
         Keep the mqtt-topic-semantics in mind.
+        Basic regular expressions are supported (ex: mapping MQTT topic "domain/.*" to Kafka topic "domain/messages")
         Make sure the kafka topics are created or enable auto.create.topics.enable in your kafka cluster.
     </description>
 
@@ -27,12 +28,16 @@
             <name>Dinh Khoi Tran</name>
             <email>dinh.khoi.tran@ipa.fraunhofer.de</email>
         </developer>
+        <developer>
+            <id>mo</id>
+            <name>Mike Oertli</name>
+        </developer>
     </developers>
 
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
 
@@ -61,6 +66,14 @@
                     </execution>
                 </executions>
 
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>10</source>
+                    <target>10</target>
+                </configuration>
             </plugin>
 
         </plugins>
@@ -120,6 +133,22 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <version>5.3.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.22.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>4.3.1</version>
             <scope>test</scope>
         </dependency>
 
