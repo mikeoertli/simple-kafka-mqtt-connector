@@ -2,3 +2,4 @@
 target
 !target/*jar-with-dependencies.jar
 /target
+docker-compose/fullstack/zookeeper
