@@ -92,62 +92,6 @@ public class SimpleKafkaMQTTConnector
 
         logger.trace("MQTT client connection callback initializing...");
         client.setCallback(new MqttClientConnectionCallback(() -> MQTT_KAFKA_TOPIC_MAP, kafkaProducer));
-//        client.setCallback(new MqttCallback()
-//        {
-//
-//            private int messageCounter = 0;
-//
-//            @Override
-//            public void connectionLost(Throwable throwable)
-//            {
-//                logger.debug("Connection lost", throwable);
-//            }
-//
-//            @Override
-//            public void messageArrived(String mqttTopic, MqttMessage mqttMessage) throws Exception
-//            {
-//                // Checks through which mqtt-topic this message was sent and sends it to the pre-configured corresponding kafka topics..
-//
-//                messageCounter++;
-//                String message = new String(mqttMessage.getPayload());
-//                logger.trace("messageArrived [#{}] - MQTT topic: {}. \n\tMessage: {}", messageCounter, mqttTopic, message);
-//
-//                try
-//                {
-//                    List<String> kafkaTopics = TopicParsingUtilities.getMatchingKafkaTopics(mqttTopic, MQTT_KAFKA_TOPIC_MAP);
-//
-//                    if (!kafkaTopics.isEmpty())
-//                    {
-//        logger.trace("Relaying message from MQTT topic ({}) to {} kafka topics ({})", mqttTopic, kafkaTopics.size(),
-//                String.join(", ", kafkaTopics));
-//                        kafkaTopics.forEach(kafkaTopic -> {
-//                            kafkaProducer.send(new ProducerRecord<>(kafkaTopic, message));
-//                        });
-//
-//                        /*
-//                         * Capture these here because if the MQTT topic matched a regex, next time we won't
-//                         * have to do the regex lookup, the topic will be explicitly in the mapping
-//                         * This will improve performance when there is a high volume of traffic for
-//                         * MQTT topics which are in topics only mapped by a regex mapping entry
-//                         */
-//                        MQTT_KAFKA_TOPIC_MAP.putIfAbsent(mqttTopic, kafkaTopics);
-//                        logger.trace("relay Message to kafka - " + message);
-//                    } else
-//                    {
-//                        logger.trace("Ignoring message on MQTT topic: {} (no Kafka mapping)", mqttTopic);
-//                    }
-//                } catch (KafkaException e)
-//                {
-//                    logger.error("There seems to be an issue with the kafka connection. Currently no messages are forwarded to the kafka cluster!!!!", e);
-//                }
-//            }
-//
-//            @Override
-//            public void deliveryComplete(IMqttDeliveryToken t)
-//            {
-//                logger.trace("deliveryComplete -- message ID: {}", t.getMessageId());
-//            }
-//        });
     }
 
     public static void initTopicsRoutingMap(String topicMappingString)

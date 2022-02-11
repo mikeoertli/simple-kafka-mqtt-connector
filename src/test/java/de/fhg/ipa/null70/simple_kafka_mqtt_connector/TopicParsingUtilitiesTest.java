@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * Verify functionality of utility methods in {@link TopicParsingUtilities}
- * 
+ *
  * @since 0.1.0
  */
 class TopicParsingUtilitiesTest
