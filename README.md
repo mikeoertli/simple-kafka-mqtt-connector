@@ -40,7 +40,7 @@ all testing/development has been done with 17.
 
 ## Usage with Docker
 
-* Docker Hub [original](https://hub.docker.com/r/arthurgrigo/simple-kafka-mqtt-connector) and [this ARM64 edition](https://hub.docker.com/r/mikeoertli/simple-arm64-kafka-mqtt-connector) (WORK IN PROGRESS)
+* Docker Hub [original](https://hub.docker.com/r/arthurgrigo/simple-kafka-mqtt-connector) and [this ARM64 edition](https://hub.docker.com/r/mikeoertli/kafka-mqtt-connector) (WORK IN PROGRESS)
 * Run (edit environment variables to your needs!): 
 
 ```shell
