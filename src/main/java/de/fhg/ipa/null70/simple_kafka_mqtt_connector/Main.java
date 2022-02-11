@@ -6,26 +6,19 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
-public class Main {
+public class Main
+{
 
     private static final Logger logger = LogManager.getLogger(Main.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws MqttException
+    {
         logger.info("######## STARTING THE SIMPLE-KAFKA-MQTT-CONNECTOR ########");
         SimpleKafkaMQTTConnector simpleKafkaMQTTConnector = new SimpleKafkaMQTTConnector();
 
-
-        // Read application.properties
-        CompositeConfiguration config = new CompositeConfiguration();
-        config.addConfiguration(new SystemConfiguration());
-
-        config.addConfiguration(new PropertiesConfiguration());
-        try {
-            config.addConfiguration(new PropertiesConfiguration("application.properties"));
-        } catch (ConfigurationException e) {
-            e.printStackTrace();
-        }
+        CompositeConfiguration config = createCompositeConfiguration("application.properties");
 
         // Properties configuration
         String kafkaHost = config.getString("kafka.host");
@@ -51,4 +44,20 @@ public class Main {
         simpleKafkaMQTTConnector.run(kafkaHost, kafkaPort, kafkaClientId, mqttHost, mqttPort, mqttClientId, mqttQos, topicMapping);
     }
 
+    public static CompositeConfiguration createCompositeConfiguration(String propertiesFileName)
+    {
+        // Read application.properties
+        CompositeConfiguration config = new CompositeConfiguration();
+        config.addConfiguration(new SystemConfiguration());
+
+        config.addConfiguration(new PropertiesConfiguration());
+        try
+        {
+            config.addConfiguration(new PropertiesConfiguration(propertiesFileName));
+        } catch (ConfigurationException e)
+        {
+            logger.error("Configuration failure while processing application.properties config file", e);
+        }
+        return config;
+    }
 }
