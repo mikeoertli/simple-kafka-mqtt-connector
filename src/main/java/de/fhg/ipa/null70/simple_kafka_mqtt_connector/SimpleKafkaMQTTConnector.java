@@ -152,7 +152,7 @@ public class SimpleKafkaMQTTConnector implements AutoCloseable, Runnable
         return new MqttClient(mqttHostString, mqttClientId);
     }
 
-    private void initMqttClient() //throws MqttException
+    private void initMqttClient()
     {
         addShutdownHook(client);
 

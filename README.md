@@ -80,11 +80,11 @@ docker run -d -t -i \
 
 ### Full Stack
 
-* Full Stack (mqtt-broker, zookeeper, kafka-broker, kafka-mqtt-connector)
+* Full Stack (`mqtt-broker` (via `mosquitto`), `zookeeper`, `kafka-broker`, `kafka-mqtt-connector`)
 * [docker-compose.yml](docker-compose/fullstack/docker-compose.yml)
 * [env.list](docker-compose/fullstack/env.list)
-* Place docker-compose.yml and env.list in the same directory
-* Edit env.list to your needs!
+* Place `docker-compose.yml` and `env.list` in the same directory
+* Edit `env.list` to your needs!
 * Run: `docker-compose up -d`
 
 
