@@ -2,17 +2,23 @@
 <Configuration status="ERROR">
     <Appenders>
         <Console name="stdout" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%d] (%c) - %p %m %n"/>
+<!--            Format reference for date/time (TL;DR - ideally use something more advanced if you want timezone support, for example):-->
+<!--                    https://examples.javacodegeeks.com/enterprise-java/log4j/log4j-date-format-example/-->
+<!--            <PatternLayout pattern="[%d] (%c) [%p] %m %n"/>-->
+<!--            <PatternLayout pattern="%d{ISO8601} [%t] %-5p (%F: %L) – %m%n"/>-->
+            <PatternLayout pattern="%d{yyyy-MM-dd'T'HH:mm:ss.SSS zzz} [%t] %-5p (%F: %L) – %m%n"/>
+<!--            <PatternLayout pattern="%highlight(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%blue(%thread)] %highlight(%-5level) %yellow(%logger{36}.%M\(%line\)) - %msg%n"/>-->
         </Console>
     </Appenders>
     <Loggers>
         <Root level="error">
             <AppenderRef ref="stdout"/>
         </Root>
-        <Logger name="org.apache.kafka.clients" level="warn" additivity="false">
+        <Logger name="org.apache.kafka.clients" level="error" additivity="false">
             <AppenderRef ref="stdout"/>
         </Logger>
-        <Logger name="de.fhg.ipa.null70.simple_kafka_mqtt_connector" level="info" additivity="false">
+<!--        <Logger name="de.fhg.ipa.null70.simple_kafka_mqtt_connector" level="trace" additivity="false">-->
+        <Logger name="de.fhg.ipa.null70.simple_kafka_mqtt_connector" level="debug" additivity="false">
             <AppenderRef ref="stdout"/>
         </Logger>
     </Loggers>

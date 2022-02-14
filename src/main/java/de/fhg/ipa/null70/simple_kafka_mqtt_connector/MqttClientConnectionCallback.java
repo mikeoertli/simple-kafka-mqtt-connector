@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -26,18 +28,22 @@ public class MqttClientConnectionCallback implements MqttCallback
     private int messageCount = 0;
     private final Supplier<Map<String, List<String>>> mqttKafkaTopicMapSupplier;
     private final KafkaProducer<Integer, String> kafkaProducer;
+    private final Consumer<Throwable> disconnectConsumer;
 
     public MqttClientConnectionCallback(Supplier<Map<String, List<String>>> mqttKafkaTopicMapSupplier,
-                                        KafkaProducer<Integer, String> kafkaProducer)
+                                        KafkaProducer<Integer, String> kafkaProducer,
+                                        Consumer<Throwable> disconnectConsumer)
     {
         this.mqttKafkaTopicMapSupplier = mqttKafkaTopicMapSupplier;
         this.kafkaProducer = kafkaProducer;
+        this.disconnectConsumer = disconnectConsumer;
     }
 
     @Override
     public void connectionLost(Throwable throwable)
     {
-        logger.debug("Connection lost", throwable);
+        logger.info("MQTT Broker Connection Lost", throwable);
+        disconnectConsumer.accept(throwable);
     }
 
     @Override
@@ -47,7 +53,13 @@ public class MqttClientConnectionCallback implements MqttCallback
 
         messageCount++;
         String message = new String(mqttMessage.getPayload());
-        logger.trace("messageArrived [#{}] - MQTT topic: {}. \n\tMessage: {}", messageCount, mqttTopic, message);
+        int mqttMessageId = mqttMessage.getId();
+        if (logger.isTraceEnabled())
+        {
+            String formattedMessage = JsonUtilities.getFormattedJsonString(message);
+            logger.trace("MQTT messageArrived [#{} / ID={}] - MQTT topic: {}. Message:\n{}", messageCount,
+                    mqttMessageId, mqttTopic, formattedMessage);
+        }
 
         try
         {
@@ -56,15 +68,24 @@ public class MqttClientConnectionCallback implements MqttCallback
 
             if (!kafkaTopics.isEmpty())
             {
-                logger.trace("Relaying message from MQTT topic ({}) to {} kafka topics ({})", mqttTopic, kafkaTopics.size(),
-                        String.join(", ", kafkaTopics));
+                if (logger.isTraceEnabled())
+                {
+                    String formattedMessage = JsonUtilities.getFormattedJsonString(message);
+                    logger.trace("Relaying message (ID={}) from MQTT topic ({}) to {} kafka topic(s) ({})\n\n", mqttMessageId,
+                            mqttTopic, kafkaTopics.size(), String.join(", ", kafkaTopics));
+                } else if (logger.isDebugEnabled())
+                {
+                    logger.debug("Relaying message (ID={}) from MQTT topic ({}) to {} kafka topic(s) ({})\n\n", mqttMessageId,
+                            mqttTopic, kafkaTopics.size(), String.join(", ", kafkaTopics));
+                }
                 kafkaTopics.forEach(kafkaTopic -> {
                     try
                     {
                         kafkaProducer.send(new ProducerRecord<>(kafkaTopic, message));
                     } catch (Exception e)
                     {
-                        logger.error("Kafka producer failed to publish data on topic: {} for MQTT topic: {}", kafkaTopic, mqttTopic, e);
+                        logger.error("Kafka producer failed to publish data on topic: {} for MQTT (message ID = {}) " +
+                                "topic: {}", kafkaTopic, mqttMessageId, mqttTopic, e);
                     }
                 });
 
@@ -74,22 +95,29 @@ public class MqttClientConnectionCallback implements MqttCallback
                  * This will improve performance when there is a high volume of traffic for
                  * MQTT topics which are in topics only mapped by a regex mapping entry
                  */
-                mqttKafkaTopicMap.putIfAbsent(mqttTopic, kafkaTopics);
-                logger.trace("relay Message to kafka - " + message);
+                boolean isNewMqttTopic = !mqttKafkaTopicMap.containsKey(mqttTopic);
+                List<String> replacedKeys = mqttKafkaTopicMap.putIfAbsent(mqttTopic, kafkaTopics);
+
+                // Only print the full topic mapping if this is a new mapping or the mapping changed
+                if (logger.isTraceEnabled() && (isNewMqttTopic || replacedKeys != null))
+                {
+                    logger.trace("MQTT to Kafka topic mapping: \n\t{}\n\n", TopicParsingUtilities.getTopicMapForPrinting(mqttKafkaTopicMap));
+                }
+
             } else
             {
-                logger.trace("Ignoring message on MQTT topic: {} (no Kafka mapping)", mqttTopic);
+                logger.trace("Ignoring message (ID={}) on MQTT topic: {} (no Kafka mapping)", mqttMessageId, mqttTopic);
             }
         } catch (KafkaException e)
         {
-            logger.error("There seems to be an issue with the kafka connection. Currently no messages are forwarded to the kafka cluster!!!!", e);
+            logger.error("There seems to be an issue with the kafka connection. Currently no messages are forwarded to the kafka cluster!!", e);
         }
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken t)
     {
-        logger.trace("deliveryComplete -- message ID: {}", t.getMessageId());
+        logger.trace("\tdeliveryComplete -- message ID: {}", t.getMessageId());
     }
 
     public int getMessageCount()

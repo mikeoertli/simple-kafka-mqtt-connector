@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Utility functions used for parsing MQTT topics
@@ -80,10 +81,13 @@ public class TopicParsingUtilities
         if (asteriskIndex >= 0)
         {
             String regexTopicSubstring = regexTopic.substring(0, asteriskIndex);
-            String incomingTopicSubstring = mqttTopicToCheck.substring(0, asteriskIndex);
-            if (regexTopicSubstring.equalsIgnoreCase(incomingTopicSubstring))
+            if (mqttTopicToCheck.length() > asteriskIndex)
             {
-                return Optional.of(regexTopic);
+                String incomingTopicSubstring = mqttTopicToCheck.substring(0, asteriskIndex);
+                if (regexTopicSubstring.equalsIgnoreCase(incomingTopicSubstring))
+                {
+                    return Optional.of(regexTopic);
+                }
             }
         }
 
@@ -101,5 +105,13 @@ public class TopicParsingUtilities
     {
         // this is not exhaustive, but for now it will work
         return topic.contains(".*");
+    }
+
+
+    public static String getTopicMapForPrinting(Map<String, List<String>> topicMap)
+    {
+        return topicMap.entrySet().stream()
+                .map(entry -> entry.getKey() + " --> [(" + entry.getValue().size() + ") -- " + String.join(", ", entry.getValue()) + "]")
+                .collect(Collectors.joining(",\n\t"));
     }
 }

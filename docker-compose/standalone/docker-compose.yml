@@ -1,18 +1,21 @@
-version: '3'
+version: '3.8'
+
 
 services:
 
   kafka-mqtt-connector:
     image: mikeoertli/kafka-mqtt-connector:0.1.0
-    restart: unless-stopped
     hostname: kafka-mqtt-connector
     container_name: kafka-mqtt-connector
+    # restart: unless-stopped
+    ports:
+      - "8083:8083"
     environment:
       KAFKA_HOST: localhost #EDITME IP THROUGH WHICH THE KAFKA BROKER WILL BE REACHED
       KAFKA_PORT: 9092
       KAFKA_CLIENT_ID: kafka-mqtt-connector-1
-      MQTT_HOST: localhost #EDITME IP THROUGH WHICH THE MQTT BROKER WILL BE REACHED
+      MQTT_HOST: 192.168.1.156 #EDITME IP THROUGH WHICH THE MQTT BROKER WILL BE REACHED
       MQTT_PORT: 1883
       MQTT_CLIENT_ID: kafka-mqtt-connector-1
       MQTT_QOS: 2
-      TOPIC_MAPPING: 'iot/event/.*>>>iot_event;iot/device/.*>>>iot_device' #EDITME
+      TOPIC_MAPPING: 'iot/event/.*>>>iot_event;iot/status/.*>>>iot_status;iot/tasking/.*>>>iot_tasking'

@@ -26,6 +26,9 @@ all testing/development has been done with 17.
 * `topic.mapping = [list_of_topic_mapping]` - This is a semicolon-separated list that describes how topics are routed from MQTT to Kafka - (Separators `>>>` (between kafka/MQTT mappings) and `;` (between pairs)) 
   * Example: `mqttTopicA>>>kafkaTopicA;mqttTopicB>>>kafkaTopicB;mqttTopicC>>>kafkaTopicC`
 
+More info about wildcards in MQTT topics can be found here: [HiveMQ's MQTT Topics & Best Practices (pt 5)](https://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-topics-best-practices/)
+
+
 ### How to build
 
 * Run: `mvn clean install`
@@ -58,7 +61,7 @@ docker run -d -t -i \
   -e MQTT_PORT=1883 \
   -e MQTT_CLIENT_ID='mqtt-client-1' \
   -e MQTT_QOS=2 \
-  -e TOPIC_MAPPING='iot/event/.*>>>iot_event;iot/device/.*>>>iot_device'  \
+  -e TOPIC_MAPPING='iot/event/.*>>>iot_event;iot/device/.*>>>iot_status'  \
   --name kafka-mqtt-connector \
   mikeoertli/kafka-mqtt-connector:latest
 ```
