@@ -61,7 +61,7 @@ docker run -d -t -i \
   -e MQTT_PORT=1883 \
   -e MQTT_CLIENT_ID='mqtt-client-1' \
   -e MQTT_QOS=2 \
-  -e TOPIC_MAPPING='iot/event/.*>>>iot_event;iot/device/.*>>>iot_status'  \
+  -e TOPIC_MAPPING='iot/event/#>>>iot_event;iot/status/#>>>iot_status;iot/tasking/#>>>iot_tasking'  \
   --name kafka-mqtt-connector \
   mikeoertli/kafka-mqtt-connector:latest
 ```

@@ -57,7 +57,7 @@ public class MqttClientConnectionCallback implements MqttCallback
         if (logger.isTraceEnabled())
         {
             String formattedMessage = JsonUtilities.getFormattedJsonString(message);
-            logger.trace("MQTT messageArrived [#{} / ID={}] - MQTT topic: {}. Message:\n{}", messageCount,
+            logger.trace("MQTT messageArrived [#{} | Message ID={}] - MQTT topic: {}. Message:\n{}", messageCount,
                     mqttMessageId, mqttTopic, formattedMessage);
         }
 
@@ -71,11 +71,11 @@ public class MqttClientConnectionCallback implements MqttCallback
                 if (logger.isTraceEnabled())
                 {
                     String formattedMessage = JsonUtilities.getFormattedJsonString(message);
-                    logger.trace("Relaying message (ID={}) from MQTT topic ({}) to {} kafka topic(s) ({})\n\n", mqttMessageId,
+                    logger.trace("Relaying message (ID={}) from MQTT topic ({}) to {} kafka topic(s) ({})\n", mqttMessageId,
                             mqttTopic, kafkaTopics.size(), String.join(", ", kafkaTopics));
                 } else if (logger.isDebugEnabled())
                 {
-                    logger.debug("Relaying message (ID={}) from MQTT topic ({}) to {} kafka topic(s) ({})\n\n", mqttMessageId,
+                    logger.debug("Relaying message (ID={}) from MQTT topic ({}) to {} kafka topic(s) ({})", mqttMessageId,
                             mqttTopic, kafkaTopics.size(), String.join(", ", kafkaTopics));
                 }
                 kafkaTopics.forEach(kafkaTopic -> {
@@ -101,7 +101,7 @@ public class MqttClientConnectionCallback implements MqttCallback
                 // Only print the full topic mapping if this is a new mapping or the mapping changed
                 if (logger.isTraceEnabled() && (isNewMqttTopic || replacedKeys != null))
                 {
-                    logger.trace("MQTT to Kafka topic mapping: \n\t{}\n\n", TopicParsingUtilities.getTopicMapForPrinting(mqttKafkaTopicMap));
+                    logger.trace("MQTT to Kafka topic mapping: \n\t{}\n", TopicParsingUtilities.getTopicMapForPrinting(mqttKafkaTopicMap));
                 }
 
             } else

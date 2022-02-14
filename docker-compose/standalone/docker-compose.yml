@@ -18,4 +18,4 @@ services:
       MQTT_PORT: 1883
       MQTT_CLIENT_ID: kafka-mqtt-connector-1
       MQTT_QOS: 2
-      TOPIC_MAPPING: 'iot/event/.*>>>iot_event;iot/status/.*>>>iot_status;iot/tasking/.*>>>iot_tasking'
+      TOPIC_MAPPING: 'iot/event/#>>>iot_event;iot/status/#>>>iot_status;iot/tasking/#>>>iot_tasking'

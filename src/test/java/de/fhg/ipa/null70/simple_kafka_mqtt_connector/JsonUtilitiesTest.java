@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Unit tests for basic functionality offered by {@link JsonUtilities}
  *

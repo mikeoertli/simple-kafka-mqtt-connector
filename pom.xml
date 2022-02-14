@@ -13,7 +13,7 @@
         This application receives messages from an MQTT broker and sends the messages to a Kafka cluster.
         Topic mapping is configurable.
         Keep the mqtt-topic-semantics in mind.
-        Basic regular expressions are supported (ex: mapping MQTT topic "domain/.*" to Kafka topic "domain/messages")
+        Basic regular expressions are supported (ex: mapping MQTT topic "domain/.*" or "domain/#" to Kafka topic "domain_messages")
         Make sure the kafka topics are created or enable auto.create.topics.enable in your kafka cluster.
     </description>
 

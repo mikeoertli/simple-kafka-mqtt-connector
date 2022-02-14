@@ -74,16 +74,16 @@ public class TopicParsingUtilities
     // the way I check for optional ispresent then return the optional (where this is called) is gross...
     private static Optional<String> getCorrespondingRegexTopic(String regexTopic, String mqttTopicToCheck)
     {
-        // TODO - future logic should properly do regex matching. Right now this only supports ".*" regex topic
+        // TODO - future logic should properly do regex matching. Right now this only supports ".*" and "#" regex topic
         //        matching similar to the Confluent connector.
-        int asteriskIndex = regexTopic.indexOf(".*");
+        int regexIndicatorIndex = regexTopic.contains("#") ? regexTopic.indexOf("#") : regexTopic.indexOf(".*");
 
-        if (asteriskIndex >= 0)
+        if (regexIndicatorIndex >= 0)
         {
-            String regexTopicSubstring = regexTopic.substring(0, asteriskIndex);
-            if (mqttTopicToCheck.length() > asteriskIndex)
+            String regexTopicSubstring = regexTopic.substring(0, regexIndicatorIndex);
+            if (mqttTopicToCheck.length() > regexIndicatorIndex)
             {
-                String incomingTopicSubstring = mqttTopicToCheck.substring(0, asteriskIndex);
+                String incomingTopicSubstring = mqttTopicToCheck.substring(0, regexIndicatorIndex);
                 if (regexTopicSubstring.equalsIgnoreCase(incomingTopicSubstring))
                 {
                     return Optional.of(regexTopic);
@@ -96,7 +96,7 @@ public class TopicParsingUtilities
 
     /**
      * Tests whether the given topic is a regular expression. Note that this is a preliminary implementation
-     * that only checks for ".*" at this time.
+     * that only checks for ".*" and "#" at this time.
      *
      * @param topic the topic to test for signs of containing a regular expression
      * @return a boolean that indicates the given topic contains a regular expression
@@ -104,7 +104,7 @@ public class TopicParsingUtilities
     public static boolean isRegexTopic(String topic)
     {
         // this is not exhaustive, but for now it will work
-        return topic.contains(".*");
+        return topic.contains(".*") || topic.contains("#");
     }
 
 

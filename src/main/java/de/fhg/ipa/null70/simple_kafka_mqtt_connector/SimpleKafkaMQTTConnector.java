@@ -180,7 +180,7 @@ public class SimpleKafkaMQTTConnector implements AutoCloseable, Runnable
                 if (key.contains(".*"))
                 {
                     topicToSub = key.replace(".*", "#");
-                    logger.debug("Tweaking topic for 'subscribe' call to replace '.*' regex wildcard " +
+                    logger.trace("Tweaking topic for 'subscribe' call to replace '.*' regex wildcard " +
                             "with MQTT standard wildcard of '#'. {} -> {}", key, topicToSub);
                 } else
                 {
